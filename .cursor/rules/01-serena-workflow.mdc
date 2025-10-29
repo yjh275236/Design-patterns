@@ -1,0 +1,63 @@
+---
+alwaysApply: false
+---
+# Serena 工作流程指南
+
+## 🎯 执行条件（自动判断）
+
+当用户消息符合以下任一条件时，本规则自动激活：
+
+### 技术代码指标
+- 提到具体代码元素：类名、函数名、文件路径、import、变量
+- 提到代码操作：实现、修改、添加、删除、修复、优化、重构、调试
+- 提到代码结构：ViewController、View、Model、Request、delegate、protocol
+- 提到技术问题：bug、错误、崩溃、异常、不工作、显示问题、布局问题
+- 提到技术概念：网络请求、UI布局、JSON解析、异步、多线程、缓存
+- 提到项目特定前缀或命名：SS开头的类名、SSBaseRequest、SnapKit、PromiseKit
+- 使用 @ 明确触发：@serena、@项目、@代码、@memory
+
+### 判断结果
+- **符合任一条件** → 立即执行"强制步骤"
+- **都不符合** → 跳过 Serena 工作流，使用通用编码规范
+
+---
+
+## ⚡ 强制步骤（项目任务必须执行）
+
+### 步骤 1：加载项目记忆
+```
+1. 调用 mcp_serena-next1_list_memories
+2. 调用 mcp_serena-next1_read_memory("project_overview.md")
+3. 在回复开头输出："✅ 已加载项目记忆：project_overview.md"
+```
+
+### 步骤 2：按需加载额外记忆
+- 涉及第三方库/技术栈 → 读取 `tech_stack.md`
+- 涉及代码实现模式 → 读取 `common_patterns.md`
+
+---
+
+## ✅ 自我验证
+
+回复前必须确认：
+- [ ] 是否调用了 list_memories？
+- [ ] 是否读取了 project_overview？
+- [ ] 是否告知了用户？
+- [ ] 代码是否符合项目规范？
+
+**如果任一项未完成，停止并重新执行。**
+
+---
+
+## 📚 标准文件清单
+
+**必须**:
+- `project_overview.md` - 项目概览
+
+**推荐**（按需）:
+- `tech_stack.md` - 第三方库详情
+- `common_patterns.md` - 代码模式
+
+---
+
+**详细维护指南**: 使用 `@serena-maintenance` 规则

@@ -1,0 +1,212 @@
+---
+alwaysApply: false
+---
+# Xcode UI 调试
+
+## 触发方式
+- `@xcode-ui.mdc`
+- "截图"、"查看界面"
+
+## 🎯 核心原则
+
+**任务完成优先，智能优化 Token**
+
+1. ✅ **先确保完成任务**：该用什么工具就用什么
+2. 🧠 **合理选择工具**：根据场景选择最合适的工具
+3. 💡 **避免重复调用**：同页面、同目的不重复
+4. ⚡ **流程自然高效**：不为省 token 牺牲任务质量
+
+## 工具选择指南
+
+| 工具 | Token | 最佳场景 | 返回内容 |
+|------|-------|---------|----------|
+| `screenshot` | ~8K | 查看界面、验证视觉效果 | 图片：颜色、字体、布局 |
+| `describe_ui` | ~25K | 需要坐标、分析层级结构 | JSON：元素类型、frame、层级 |
+| `grep` | ~2K | 搜索代码关键词 | 匹配行 |
+| `read_file` | ~5K | 查看完整代码 | 文件内容 |
+| `tap` | ~1K | 模拟点击 | 操作结果 |
+
+## 决策流程
+
+### 1. 只看界面
+```
+screenshot
+```
+**用途**：了解当前页面、确认 UI 状态
+
+### 2. 修改样式（颜色/字体/圆角等）
+```
+screenshot（看问题）→ grep（找代码）→ read_file（看代码）
+→ 修改 → 重新构建 → screenshot（验证效果）
+```
+**注意**：验证视觉效果用 screenshot，describe_ui 不返回颜色/字体
+
+### 3. 修改布局（间距/尺寸）
+```
+screenshot（看问题）→ describe_ui（需要精确测量时）
+→ grep → read_file → 修改 → 重新构建 → screenshot
+```
+**何时需要 describe_ui**：
+- 需要知道精确的像素值
+- 需要了解约束关系
+- 视觉判断不够清晰
+
+### 4. 点击元素/交互测试
+```
+screenshot（找元素）→ describe_ui（获取坐标）
+→ tap → screenshot（验证结果）
+```
+
+### 5. 复杂分析（多层级/动态内容）
+```
+screenshot（整体）→ describe_ui（详细）→ 分析 → 操作
+```
+
+## 常用搜索关键词
+
+| 问题 | grep 关键词 | 文件类型 |
+|------|------------|----------|
+| 间距 | `offset\|inset\|spacing` | .swift |
+| 颜色 | `hexString.*#\|backgroundColor\|UIColor` | .swift |
+| 圆角 | `cornerRadius\|layer\.corner` | .swift |
+| 字体 | `systemFont.*ofSize\|font` | .swift |
+| 尺寸 | `equalTo\|width\|height\|size` | .swift |
+| 导航栏 | `navigationBar\|navigationItem` | .swift |
+| 分割线 | `separator\|divider\|line` | .swift |
+| 约束 | `snp\.makeConstraints\|NSLayout` | .swift |
+
+## ✅ 推荐做法
+
+### 高效流程
+```
+✅ screenshot → 判断需要什么 → 选对工具 → 完成任务
+
+✅ describe_ui 该用就用，不犹豫
+   - 需要坐标？用
+   - 需要分析层级？用
+   - 需要精确测量？用
+
+✅ 同页面保存结果，避免重复调用
+   - describe_ui 结果保存，需要时查看
+   - screenshot 已看清，不重复截图
+```
+
+### 合理使用 describe_ui
+```
+✅ 点击前必用：需要坐标
+✅ 精确测量：视觉判断不够
+✅ 层级分析：理解 UI 结构
+✅ 复杂布局：多元素关系
+
+⚠️ 同页面不重复调用
+⚠️ 已截图看清楚的不用
+```
+
+
+## Token 参考（非限制）
+
+| 场景 | 合理用量 | 说明 |
+|------|---------|------|
+| 快速查看 | 8-15K | screenshot + 少量代码 |
+| 样式修改 | 15-30K | screenshot + grep + read + screenshot |
+| 布局修改 | 30-50K | 可能需要 describe_ui |
+| 交互测试 | 35-60K | describe_ui + tap + 验证 |
+| 复杂分析 | 50-100K | 多次工具组合使用 |
+
+**记住**：完成任务 > 节省 token
+
+## describe_ui 能力说明
+
+### 可以获取
+- ✅ 元素类型（Button, Label, View...）
+- ✅ Frame 坐标（x, y, width, height）
+- ✅ 层级关系（父子元素）
+- ✅ 元素属性（isEnabled, isSelected...）
+- ✅ 文本内容（部分）
+
+### 无法获取
+- ❌ 颜色（backgroundColor, textColor）
+- ❌ 字体（font, fontSize）
+- ❌ 圆角半径（cornerRadius）
+- ❌ 阴影效果（shadow）
+- ❌ 渐变效果（gradient）
+
+**视觉属性必须用 screenshot 验证！**
+
+## 实战示例
+
+### 示例 1：改按钮颜色
+```
+用户："按钮颜色太浅了"
+→ screenshot（确认问题）
+→ grep "按钮文本"（找到文件）
+→ read_file（查看代码）
+→ 修改颜色
+→ 重新构建
+→ screenshot（验证效果）
+Token: ~20K ✅ 任务完成
+```
+
+### 示例 2：调整间距
+```
+用户："图标和文字太近了"
+→ screenshot（看问题）
+→ describe_ui（精确测量当前间距）✅ 该用就用
+→ grep "offset"（找约束代码）
+→ read_file
+→ 修改间距
+→ 重新构建
+→ screenshot（验证）
+Token: ~40K ✅ 任务完成，该用的都用了
+```
+
+### 示例 3：测试点击
+```
+用户："点击右上角按钮"
+→ screenshot（找按钮）
+→ describe_ui（获取坐标）✅ 必须用
+→ tap
+→ screenshot（确认响应）
+Token: ~35K ✅ 正常用量
+```
+
+## UI 问题诊断
+
+### 问题: 应用黑屏或 UI 为空
+
+**诊断流程：**
+```
+1. 基础检查
+   describe_ui() → 判断问题类型：
+   - Application 存在但 children 为空 → UI 未加载（继续诊断）
+   - 完全没有 Application → 应用未启动（使用 @xcode-log.mdc）
+
+2. 如果是 UI 未加载：
+   screenshot() // 确认视觉效果
+   → 检查窗口创建代码
+   → 检查视图控制器加载
+   → 检查项目配置（Scene 系统等）
+   → 必要时清理重建
+```
+
+### 通用诊断原则
+
+1. **先验证状态**：describe_ui() 判断问题类型
+2. **检查代码**：查找窗口创建、视图加载相关代码
+3. **检查配置**：项目设置、Info.plist 配置
+4. **清理重建**：遇到问题时先尝试清理 + 重建
+5. **添加日志**：在关键位置添加 print 辅助诊断
+6. **验证修复**：修复后必须验证效果
+
+**注意：** 
+- 启动问题（应用未启动）使用 @xcode-log.mdc
+- 构建问题使用 @xcode-build.mdc
+
+## 核心思维
+
+1. **任务优先**：完成 > 优化
+2. **工具合适**：场景 → 工具
+3. **避免重复**：保存 → 复用
+4. **自然流程**：逻辑 → 操作
+
+**Token 是资源，不是枷锁！**
