@@ -9,6 +9,8 @@
 import Foundation
 
 // MARK: - 模板方法模式
+// 核心角色：Game 基类定义算法骨架（play），子类重写步骤细节
+// 新手提示：关注“核心实现”标注，理解模板方法如何固定流程、允许步骤变化
 
 // 游戏基类，定义游戏流程的模板方法
 class Game {
@@ -26,7 +28,7 @@ class Game {
         return result
     }
     
-    // 初始化方法，由子类重写
+    // 核心实现：具体步骤允许子类覆盖
     func initialize() -> String {
         // 默认实现：返回基础初始化信息
         return "游戏初始化"
@@ -86,4 +88,10 @@ class Football: Game {
         return "足球游戏结束。"
     }
 }
+
+// 使用示例（运行模板方法，体验固定流程与可变步骤）：
+// let cricket = Cricket()
+// print(cricket.play())               // 核心：调用模板方法 play()
+// let football = Football()
+// print(football.play())
 

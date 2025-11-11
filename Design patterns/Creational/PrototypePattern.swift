@@ -9,6 +9,8 @@
 import Foundation
 
 // MARK: - 原型模式
+// 核心角色：Cloneable 协议定义克隆行为，具体原型负责复制自身独有的状态
+// 新手提示：重点关注“核心实现”注释的克隆方法，其他成员只是为了展示不同图形属性
 
 // 可克隆协议，定义克隆方法
 protocol Cloneable {
@@ -37,7 +39,7 @@ class PrototypeShape: Cloneable {
     
     // 实现clone方法，创建当前对象的副本
     func clone() -> Self {
-        // 创建新的PrototypeShape实例，复制所有属性值
+        // 核心实现：创建新的PrototypeShape实例，复制所有属性值
         return PrototypeShape(x: self.x, y: self.y, color: self.color) as! Self
     }
     
@@ -63,7 +65,7 @@ class PrototypeCircle: PrototypeShape {
     
     // 重写clone方法，创建圆形的副本
     override func clone() -> Self {
-        // 创建新的PrototypeCircle实例，复制所有属性包括radius
+        // 核心实现：创建新的PrototypeCircle实例，复制所有属性包括radius
         return PrototypeCircle(x: self.x, y: self.y, color: self.color, radius: self.radius) as! Self
     }
     
@@ -93,7 +95,7 @@ class PrototypeRectangle: PrototypeShape {
     
     // 重写clone方法，创建矩形的副本
     override func clone() -> Self {
-        // 创建新的PrototypeRectangle实例，复制所有属性包括width和height
+        // 核心实现：创建新的PrototypeRectangle实例，复制所有属性包括width和height
         return PrototypeRectangle(x: self.x, y: self.y, color: self.color, width: self.width, height: self.height) as! Self
     }
     
@@ -103,4 +105,9 @@ class PrototypeRectangle: PrototypeShape {
         return "矩形在位置(\(x), \(y))，颜色: \(color)，尺寸: \(width) × \(height)"
     }
 }
+
+// 使用示例（先准备原型，再克隆使用）：
+// let circlePrototype = PrototypeCircle(x: 10, y: 20, color: "蓝色", radius: 5)
+// let circleCopy = circlePrototype.clone()      // 核心：通过clone复制状态
+// print(circleCopy.describe())                  // 输出克隆对象的信息
 

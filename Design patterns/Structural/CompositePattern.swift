@@ -9,10 +9,12 @@
 import Foundation
 
 // MARK: - 组合模式
+// 核心角色：CompoundGraphic（组合节点）与 Dot/CompositeCircle（叶节点）共享 Graphic 接口，实现一致操作
+// 新手提示：留意“核心实现”标记部分理解组合关系，其余内容为实际图形示例
 
 // 图形协议，定义图形的基本接口，使用AnyObject限制为类类型
 protocol Graphic: AnyObject {
-    // 绘制图形的方法
+    // 核心实现：统一的绘制操作
     func draw() -> String
 }
 
@@ -69,13 +71,13 @@ class CompoundGraphic: Graphic {
     // 私有属性：存储子图形对象的数组
     private var children: [Graphic] = []
     
-    // 添加子图形的方法
+    // 核心实现：在组合中添加子节点
     func add(child: Graphic) {
         // 将子图形添加到数组中
         children.append(child)
     }
     
-    // 移除子图形的方法
+    // 核心实现：从组合中移除子节点
     func remove(child: Graphic) {
         // 查找子图形在数组中的索引位置（使用引用相等性比较）
         if let index = children.firstIndex(where: { $0 === child }) {
@@ -84,7 +86,7 @@ class CompoundGraphic: Graphic {
         }
     }
     
-    // 实现draw方法，绘制组合图形
+    // 核心实现：遍历并委托子节点执行同样的操作
     func draw() -> String {
         // 初始化结果字符串
         var result = "组合图形包含:\n"
@@ -97,4 +99,12 @@ class CompoundGraphic: Graphic {
         return result
     }
 }
+
+// 使用示例（客户端无需区分叶子或组合，直接调用统一接口）：
+// let dot: Graphic = Dot(x: 1, y: 2)
+// let circle: Graphic = CompositeCircle(x: 5, y: 5, radius: 3)
+// let compound = CompoundGraphic()
+// compound.add(child: dot)
+// compound.add(child: circle)
+// print(compound.draw())                        // 核心：组合节点与叶子节点拥有一致的操作
 

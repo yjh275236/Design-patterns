@@ -9,18 +9,20 @@
 import Foundation
 
 // MARK: - 迭代器模式
+// 核心角色：Iterator 定义遍历接口，具体迭代器持有遍历状态，Container 负责创建迭代器
+// 新手提示：关注“核心实现”标注的部分，理解遍历状态如何与集合解耦
 
 // 迭代器协议，定义遍历集合的接口
 protocol Iterator {
-    // 检查是否还有下一个元素
+    // 核心实现：检查是否还有下一个元素
     func hasNext() -> Bool
-    // 获取下一个元素
+    // 核心实现：获取下一个元素
     func next() -> String?
 }
 
 // 容器协议，定义创建迭代器的接口
 protocol Container {
-    // 获取迭代器的方法
+    // 核心实现：返回集合对应的迭代器
     func getIterator() -> Iterator
 }
 
@@ -70,4 +72,11 @@ class NameIterator: Iterator {
         return nil
     }
 }
+
+// 使用示例（客户端借助迭代器遍历集合）：
+// let repository = NameRepository()
+// let iterator = repository.getIterator()            // 核心：通过容器获取迭代器
+// while iterator.hasNext() {
+//     print(iterator.next() ?? "")
+// }
 

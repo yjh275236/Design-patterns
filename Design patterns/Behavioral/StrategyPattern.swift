@@ -9,10 +9,12 @@
 import Foundation
 
 // MARK: - 策略模式
+// 核心角色：PaymentStrategy 定义可互换算法接口，ShoppingCart 在运行时注入不同策略
+// 新手提示：关注“核心实现”标记，理解如何在不修改上下文的情况下切换算法
 
 // 支付策略协议，定义支付策略的接口
 protocol PaymentStrategy {
-    // 支付方法，接收支付金额，返回支付信息
+    // 核心实现：执行具体算法
     func pay(amount: Double) -> String
 }
 
@@ -65,13 +67,13 @@ class ShoppingCart {
         items[name] = price
     }
     
-    // 设置支付策略的方法
+    // 核心实现：在运行时注入不同策略
     func setPaymentStrategy(_ strategy: PaymentStrategy) {
         // 保存支付策略引用
         self.paymentStrategy = strategy
     }
     
-    // 结账方法，使用设置的支付策略进行支付
+    // 核心实现：上下文调用策略执行具体算法
     func checkout() -> String? {
         // 计算所有商品的总价
         let total = items.values.reduce(0, +)
@@ -90,4 +92,13 @@ class ShoppingCart {
         return items.values.reduce(0, +)
     }
 }
+
+// 使用示例（根据场景切换不同的支付策略）：
+// let cart = ShoppingCart()
+// cart.addItem(name: "书籍", price: 68)
+// cart.addItem(name: "耳机", price: 199)
+// cart.setPaymentStrategy(CreditCardStrategy(cardNumber: "6222-****-****-8888"))  // 核心：选择策略
+// print(cart.checkout() ?? "")
+// cart.setPaymentStrategy(WeChatPayStrategy())
+// print(cart.checkout() ?? "")
 

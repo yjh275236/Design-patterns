@@ -9,6 +9,8 @@
 import Foundation
 
 // MARK: - 适配器模式
+// 核心角色：MediaAdapter 负责把 AdvancedMediaPlayer 的接口转换为 MediaPlayer 统一接口
+// 新手提示：关注“核心实现”标记即可理解适配器，其余代码只是示例播放器的具体实现
 
 // 媒体播放器协议，定义标准的播放接口
 protocol MediaPlayer {
@@ -74,7 +76,7 @@ class MediaAdapter: MediaPlayer {
     
     // 初始化方法，根据音频类型创建对应的播放器
     init(audioType: String) {
-        // 如果是vlc格式，创建VLC播放器
+        // 核心实现：根据请求类型选择具体的高级播放器
         if audioType == "vlc" {
             advancedPlayer = VlcPlayer()
         } else if audioType == "mp4" {
@@ -85,7 +87,7 @@ class MediaAdapter: MediaPlayer {
     
     // 实现play方法，适配高级播放器的接口
     func play(audioType: String, fileName: String) {
-        // 如果是vlc格式，调用VLC播放器的playVlc方法
+        // 核心实现：把统一的接口调用转换为具体实现
         if audioType == "vlc" {
             advancedPlayer?.playVlc(fileName: fileName)
         } else if audioType == "mp4" {
@@ -106,7 +108,7 @@ class EnhancedAudioPlayer: AudioPlayer {
         if audioType == "mp3" {
             super.play(audioType: audioType, fileName: fileName)
         } else if audioType == "vlc" || audioType == "mp4" {
-            // 如果是vlc或mp4格式，使用适配器播放
+            // 核心实现：通过组合适配器来扩展格式支持
             mediaAdapter = MediaAdapter(audioType: audioType)
             mediaAdapter?.play(audioType: audioType, fileName: fileName)
         } else {
@@ -115,4 +117,9 @@ class EnhancedAudioPlayer: AudioPlayer {
         }
     }
 }
+
+// 使用示例（客户端依赖统一接口，必要时由适配器转换）：
+// let player: MediaPlayer = EnhancedAudioPlayer()      // 核心：客户端只面向MediaPlayer
+// player.play(audioType: "mp3", fileName: "music.mp3") // 直接播放旧格式
+// player.play(audioType: "mp4", fileName: "movie.mp4") // 通过适配器支持新格式
 

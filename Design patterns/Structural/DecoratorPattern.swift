@@ -9,12 +9,14 @@
 import Foundation
 
 // MARK: - 装饰模式
+// 核心角色：CoffeeDecorator 与 Coffee 共享接口，通过组合叠加功能
+// 新手提示：注意“核心实现”标记，了解装饰器如何包裹基础组件，其余只是示例配料
 
 // 咖啡协议，定义咖啡的基本接口
 protocol Coffee {
-    // 计算价格的方法
+    // 核心实现：计算价格
     func cost() -> Double
-    // 获取描述的方法
+    // 核心实现：获取描述
     func description() -> String
 }
 
@@ -38,19 +40,19 @@ class CoffeeDecorator: Coffee {
     // 私有属性：持有被装饰的咖啡对象的引用
     private let coffee: Coffee
     
-    // 初始化方法，接收要装饰的咖啡对象
+    // 核心实现：通过构造函数注入被装饰对象
     init(coffee: Coffee) {
         // 保存咖啡对象引用
         self.coffee = coffee
     }
     
-    // 实现cost方法，默认返回被装饰对象的价格
+    // 核心实现：转发基础行为
     func cost() -> Double {
         // 返回被装饰咖啡的价格
         return coffee.cost()
     }
     
-    // 实现description方法，默认返回被装饰对象的描述
+    // 核心实现：转发描述
     func description() -> String {
         // 返回被装饰咖啡的描述
         return coffee.description()
@@ -61,7 +63,7 @@ class CoffeeDecorator: Coffee {
 class MilkDecorator: CoffeeDecorator {
     // 重写cost方法，在基础价格上添加牛奶价格
     override func cost() -> Double {
-        // 调用父类方法获取基础价格，然后加上牛奶价格
+        // 核心实现：在转发结果上追加新行为
         return super.cost() + 2.0
     }
     
@@ -76,7 +78,7 @@ class MilkDecorator: CoffeeDecorator {
 class SugarDecorator: CoffeeDecorator {
     // 重写cost方法，在基础价格上添加糖价格
     override func cost() -> Double {
-        // 调用父类方法获取基础价格，然后加上糖价格
+        // 核心实现：叠加额外成本
         return super.cost() + 1.0
     }
     
@@ -91,7 +93,7 @@ class SugarDecorator: CoffeeDecorator {
 class WhipDecorator: CoffeeDecorator {
     // 重写cost方法，在基础价格上添加奶油价格
     override func cost() -> Double {
-        // 调用父类方法获取基础价格，然后加上奶油价格
+        // 核心实现：叠加额外成本
         return super.cost() + 1.5
     }
     
@@ -101,4 +103,10 @@ class WhipDecorator: CoffeeDecorator {
         return super.description() + ", 加奶油"
     }
 }
+
+// 使用示例（根据需要按顺序组合装饰器）：
+// var coffee: Coffee = SimpleCoffee()                  // 核心：从基础组件开始
+// coffee = MilkDecorator(coffee: coffee)               // 动态添加功能
+// coffee = SugarDecorator(coffee: coffee)
+// print(coffee.description(), coffee.cost())           // 组合后的行为叠加生效
 

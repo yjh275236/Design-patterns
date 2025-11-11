@@ -9,6 +9,8 @@
 import Foundation
 
 // MARK: - 命令模式
+// 核心角色：Command 抽象封装请求，Invoker（RemoteControl）触发命令，Receiver（Light）执行实际动作
+// 新手提示：重点关注“核心实现”标记的 execute/undo 与命令对象组合，其余内容仅为样例
 
 // 命令协议，定义命令的统一接口
 protocol Command {
@@ -86,7 +88,7 @@ class RemoteControl {
     // 私有属性：当前设置的命令（可选）
     private var command: Command?
     
-    // 设置命令的方法
+    // 核心实现：Invoker 通过注入命令对象来触发不同操作
     func setCommand(command: Command) {
         // 保存命令引用
         self.command = command
@@ -94,7 +96,7 @@ class RemoteControl {
     
     // 按下按钮的方法，执行命令
     func pressButton() -> String? {
-        // 执行当前设置的命令
+        // 核心实现：调用命令对象，解耦调用者与接收者
         command?.execute()
         // 返回操作结果信息
         return "按钮已按下"
@@ -108,4 +110,11 @@ class RemoteControl {
         return "撤销操作"
     }
 }
+
+// 使用示例（在运行时将不同命令绑定到同一个调用者）：
+// let light = Light()
+// let remote = RemoteControl()
+// remote.setCommand(command: LightOnCommand(light: light))   // 核心：将请求封装成命令对象
+// remote.pressButton()
+// remote.pressUndo()
 

@@ -9,10 +9,12 @@
 import Foundation
 
 // MARK: - 解释器模式
+// 核心角色：Expression 抽象节点定义 interpret，组合节点（And/Or）递归调用子节点
+// 新手提示：留意“核心实现”标记理解语法树递归求值，其余部分为简单示例
 
 // 表达式协议，定义解释器的基础接口
 protocol Expression {
-    // 解释方法，接收上下文字符串，返回布尔值
+    // 核心实现：解释输入上下文
     func interpret(context: String) -> Bool
 }
 
@@ -27,7 +29,7 @@ class TerminalExpression: Expression {
         self.data = data
     }
     
-    // 实现interpret方法，检查上下文是否包含该数据
+    // 核心实现：终结符节点的判断逻辑
     func interpret(context: String) -> Bool {
         // 返回上下文是否包含要匹配的数据
         return context.contains(data)
@@ -49,7 +51,7 @@ class OrExpression: Expression {
         self.expr2 = expr2
     }
     
-    // 实现interpret方法，执行逻辑或操作
+    // 核心实现：非终结符组合逻辑（或）
     func interpret(context: String) -> Bool {
         // 返回两个表达式解释结果的逻辑或
         return expr1.interpret(context: context) || expr2.interpret(context: context)
@@ -71,10 +73,18 @@ class AndExpression: Expression {
         self.expr2 = expr2
     }
     
-    // 实现interpret方法，执行逻辑与操作
+    // 核心实现：非终结符组合逻辑（与）
     func interpret(context: String) -> Bool {
         // 返回两个表达式解释结果的逻辑与
         return expr1.interpret(context: context) && expr2.interpret(context: context)
     }
 }
+
+// 使用示例（构建语法树后对输入进行解释）：
+// let isJava = TerminalExpression(data: "Java")
+// let isKotlin = TerminalExpression(data: "Kotlin")
+// let isJavaDev = AndExpression(expr1: isJava, expr2: TerminalExpression(data: "开发"))
+// let isBackendLanguage = OrExpression(expr1: isJava, expr2: isKotlin) // 核心：组合表达式
+// print(isBackendLanguage.interpret(context: "熟悉Java和Kotlin"))         // true
+// print(isJavaDev.interpret(context: "Java 开发工程师"))                  // true
 

@@ -9,6 +9,8 @@
 import Foundation
 
 // MARK: - 外观模式
+// 核心角色：ComputerFacade 向客户端提供简化接口，内部协调 CPU、Memory、HardDrive
+// 新手提示：关注“核心实现”标记即可理解外观模式，子系统类只是示例
 
 // CPU类，代表计算机的CPU组件
 class CPU {
@@ -62,7 +64,7 @@ class ComputerFacade {
     // 私有属性：硬盘实例
     private let hardDrive: HardDrive
     
-    // 初始化方法，创建各个子系统组件
+    // 核心实现：在外观内部组合所需子系统
     init() {
         // 创建CPU实例
         self.cpu = CPU()
@@ -72,7 +74,7 @@ class ComputerFacade {
         self.hardDrive = HardDrive()
     }
     
-    // 启动计算机的方法，封装了复杂的启动流程
+    // 核心实现：对外暴露的简化接口，隐藏内部复杂流程
     func start() {
         // 打印启动开始标记
         print("=== 启动计算机 ===")
@@ -90,4 +92,8 @@ class ComputerFacade {
         print("✅ 计算机启动完成\n")
     }
 }
+
+// 使用示例（客户端只需与外观交互，避免直接操作子系统）：
+// let computer = ComputerFacade()       // 核心：仅创建外观对象
+// computer.start()                      // 外观内部负责协调所有子系统步骤
 

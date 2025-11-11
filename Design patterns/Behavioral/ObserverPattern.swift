@@ -9,20 +9,22 @@
 import Foundation
 
 // MARK: - 观察者模式
+// 核心角色：Subject（主题）维护观察者列表并广播更新，Observer 接口供展示层实现
+// 新手提示：关注“核心实现”注释的注册/通知流程即可理解模式，其余代码展示具体观察者
 
 // 观察者协议，定义观察者的接口，使用AnyObject限制为类类型
 protocol Observer: AnyObject {
-    // 更新方法，接收被观察者的状态变化
+    // 核心实现：主题状态变更时的回调
     func update(temperature: Double, humidity: Double, pressure: Double)
 }
 
 // 主题协议，定义被观察者的接口
 protocol Subject {
-    // 注册观察者的方法
+    // 核心实现：注册观察者
     func registerObserver(_ observer: Observer)
-    // 移除观察者的方法
+    // 核心实现：移除观察者
     func removeObserver(_ observer: Observer)
-    // 通知所有观察者的方法
+    // 核心实现：通知所有观察者
     func notifyObservers()
 }
 
@@ -53,7 +55,7 @@ class WeatherData: Subject {
     func notifyObservers() {
         // 遍历所有观察者
         for observer in observers {
-            // 调用每个观察者的update方法，传递最新数据
+            // 核心实现：调用每个观察者的update方法，传递最新数据
             observer.update(temperature: temperature, humidity: humidity, pressure: pressure)
         }
     }
@@ -88,4 +90,12 @@ class StatisticsDisplay: Observer {
         print("统计显示 - 温度: \(temperature)°C")
     }
 }
+
+// 使用示例（主题更新数据时自动通知所有观察者）：
+// let weatherData = WeatherData()
+// let currentDisplay = CurrentConditionsDisplay()
+// let statisticsDisplay = StatisticsDisplay()
+// weatherData.registerObserver(currentDisplay)          // 核心：观察者向主题注册
+// weatherData.registerObserver(statisticsDisplay)
+// weatherData.setMeasurements(temperature: 26, humidity: 60, pressure: 1013)
 

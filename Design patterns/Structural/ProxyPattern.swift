@@ -9,6 +9,8 @@
 import Foundation
 
 // MARK: - 代理模式
+// 核心角色：ImageProxy 作为代理控制 RealImage 的创建与访问，实现延迟加载
+// 新手提示：标记为“核心实现”的代码展现代理模式的关键，其余逻辑用于输出演示
 
 // 定义图片接口，所有图片类都必须实现display方法
 protocol Image {
@@ -21,7 +23,7 @@ class RealImage: Image {
     // 私有属性：存储图片文件名
     private let filename: String
     
-    // 初始化方法，创建真实图片对象时自动从磁盘加载
+    // 演示逻辑：创建真实图片对象时自动从磁盘加载
     init(filename: String) {
         // 保存文件名
         self.filename = filename
@@ -59,11 +61,16 @@ class ImageProxy: Image {
     func display() {
         // 检查真实图片对象是否已创建
         if realImage == nil {
-            // 如果未创建，则现在创建真实图片对象（延迟加载）
+            // 核心实现：延迟创建真实对象
             realImage = RealImage(filename: filename)
         }
         // 调用真实图片对象的display方法
         realImage?.display()
     }
 }
+
+// 使用示例（在需要展示图片时调用代理而非直接创建真实对象）：
+// let image: Image = ImageProxy(filename: "地图.png")   // 核心：通过代理持有真实对象
+// image.display()                                      // 第一次调用会触发 RealImage 加载
+// image.display()                                      // 后续调用复用已加载的图片
 

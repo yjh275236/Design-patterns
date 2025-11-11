@@ -9,10 +9,12 @@
 import Foundation
 
 // MARK: - 状态模式
+// 核心角色：Context 保存当前 State，具体状态类在 handle 中决定转换
+// 新手提示：关注“核心实现”标注，理解状态切换被封装在状态类中，避免上下文写大量条件
 
 // 状态协议，定义状态的接口
 protocol State {
-    // 处理方法，接收上下文对象，返回处理结果
+    // 核心实现：根据当前状态处理请求，并可切换上下文状态
     func handle(context: Context) -> String
 }
 
@@ -33,7 +35,7 @@ class Context {
         self.state = state
     }
     
-    // 请求处理方法，委托给当前状态处理
+    // 核心实现：将请求委托给当前状态对象
     func request() -> String {
         // 调用当前状态的handle方法
         return state.handle(context: self)
@@ -58,7 +60,7 @@ class Context {
 class ConcreteStateA: State {
     // 实现handle方法，处理请求并转换状态
     func handle(context: Context) -> String {
-        // 将上下文状态转换为状态B
+        // 核心实现：在状态内部设置下一个状态
         context.setState(ConcreteStateB())
         // 返回状态转换信息
         return "从状态A转换到状态B"
@@ -69,10 +71,16 @@ class ConcreteStateA: State {
 class ConcreteStateB: State {
     // 实现handle方法，处理请求并转换状态
     func handle(context: Context) -> String {
-        // 将上下文状态转换为状态A
+        // 核心实现：切换回另一个状态
         context.setState(ConcreteStateA())
         // 返回状态转换信息
         return "从状态B转换到状态A"
     }
 }
+
+// 使用示例（客户端只需调用 request，状态切换在内部完成）：
+// let context = Context(state: ConcreteStateA())         // 核心：以某个状态初始化
+// print(context.request())                               // 从状态A -> 状态B
+// print(context.getCurrentState())
+// print(context.request())                               // 从状态B -> 状态A
 

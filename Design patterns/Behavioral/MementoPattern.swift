@@ -9,6 +9,8 @@
 import Foundation
 
 // MARK: - 备忘录模式
+// 核心角色：Originator 负责创建/恢复备忘录，Memento 封装状态，Caretaker 管理历史记录
+// 新手提示：关注“核心实现”标记即可理解状态保存与恢复的流程，其他代码为辅助演示
 
 // 备忘录类，存储发起者的状态
 class Memento {
@@ -45,13 +47,13 @@ class Originator {
         return state
     }
     
-    // 将当前状态保存到备忘录的方法
+    // 核心实现：将当前状态保存到备忘录
     func saveStateToMemento() -> Memento {
         // 创建备忘录并保存当前状态
         return Memento(state: state)
     }
     
-    // 从备忘录恢复状态的方法
+    // 核心实现：从备忘录恢复状态
     func getStateFromMemento(memento: Memento) {
         // 从备忘录中获取状态并恢复
         state = memento.getState()
@@ -86,4 +88,15 @@ class Caretaker {
         return mementos.count
     }
 }
+
+// 使用示例（按时间线保存与恢复状态）：
+// let originator = Originator()
+// let caretaker = Caretaker()
+// originator.setState("草稿 v1")
+// caretaker.add(memento: originator.saveStateToMemento())   // 核心：保存状态快照
+// originator.setState("草稿 v2")
+// if let previous = caretaker.get(index: 0) {
+//     originator.getStateFromMemento(memento: previous)     // 恢复到旧版本
+//     print(originator.getState())
+// }
 

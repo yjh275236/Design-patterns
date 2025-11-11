@@ -9,10 +9,12 @@
 import Foundation
 
 // MARK: - 中介者模式
+// 核心角色：Mediator 负责转发消息，Colleague 之间不直接通信
+// 新手提示：留意“核心实现”注释了解消息如何经由中介者转发，其他代码是示例同事
 
 // 中介者协议，定义中介者的接口
 protocol Mediator {
-    // 通知方法，接收发送者和事件信息，返回处理结果
+    // 核心实现：接收发送者事件并转发
     func notify(sender: Colleague, event: String) -> String?
 }
 
@@ -20,7 +22,7 @@ protocol Mediator {
 protocol Colleague: AnyObject {
     // 中介者引用（可选）
     var mediator: Mediator? { get set }
-    // 发送事件的方法
+    // 核心实现：将事件发送给中介者
     func send(event: String) -> String?
     // 接收消息的方法
     func receive(message: String)
@@ -47,7 +49,7 @@ class ConcreteMediator: Mediator {
         for colleague in colleagues {
             // 如果不是发送者本身，则向其发送消息
             if colleague !== sender {
-                // 调用同事的receive方法接收消息
+                // 核心实现：在单一位置控制消息分发
                 colleague.receive(message: "收到消息: \(event)")
                 // 添加到结果字符串
                 result += "消息已发送给其他同事\n"
@@ -83,4 +85,12 @@ class ConcreteColleague: Colleague {
         print("\(name) \(message)")
     }
 }
+
+// 使用示例（通过中介者协调多个同事对象）：
+// let mediator = ConcreteMediator()
+// let alice = ConcreteColleague(name: "Alice")
+// let bob = ConcreteColleague(name: "Bob")
+// mediator.addColleague(alice)
+// mediator.addColleague(bob)
+// alice.send(event: "请求支援")                    // 核心：消息经由中介者转发给其他同事
 

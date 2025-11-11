@@ -9,6 +9,8 @@
 import Foundation
 
 // MARK: - 桥接模式
+// 核心角色：Shape（抽象部分）持有 Color（实现部分），两者解耦后可独立扩展
+// 新手提示：关注“核心实现”标记即可掌握桥接思想，具体颜色和形状只是示例
 
 // 颜色协议，定义应用颜色的方法
 protocol Color {
@@ -18,7 +20,7 @@ protocol Color {
 
 // 红色类，实现Color协议
 class Red: Color {
-    // 实现applyColor方法，返回红色
+    // 演示实现：返回红色
     func applyColor() -> String {
         // 返回红色字符串
         return "红色"
@@ -27,7 +29,7 @@ class Red: Color {
 
 // 蓝色类，实现Color协议
 class Blue: Color {
-    // 实现applyColor方法，返回蓝色
+    // 演示实现：返回蓝色
     func applyColor() -> String {
         // 返回蓝色字符串
         return "蓝色"
@@ -36,7 +38,7 @@ class Blue: Color {
 
 // 绿色类，实现Color协议
 class Green: Color {
-    // 实现applyColor方法，返回绿色
+    // 演示实现：返回绿色
     func applyColor() -> String {
         // 返回绿色字符串
         return "绿色"
@@ -47,7 +49,7 @@ class Green: Color {
 protocol Shape {
     // 颜色属性，可读写
     var color: Color { get set }
-    // 绘制形状的方法
+    // 核心实现：依赖Color接口完成绘制
     func draw() -> String
 }
 
@@ -62,7 +64,7 @@ class BridgeCircle: Shape {
         self.color = color
     }
     
-    // 实现draw方法，绘制圆形
+    // 核心实现：将具体颜色的行为桥接到形状
     func draw() -> String {
         // 返回绘制圆形的描述，使用颜色
         return "绘制\(color.applyColor())的圆形"
@@ -80,10 +82,16 @@ class BridgeSquare: Shape {
         self.color = color
     }
     
-    // 实现draw方法，绘制正方形
+    // 核心实现：调用颜色实现，组合出新的形状外观
     func draw() -> String {
         // 返回绘制正方形的描述，使用颜色
         return "绘制\(color.applyColor())的正方形"
     }
 }
+
+// 使用示例（在运行时自由组合形状与颜色）：
+// let circle: Shape = BridgeCircle(color: Red())      // 核心：通过组合而非继承拓展维度
+// print(circle.draw())
+// circle.color = Blue()                               // 运行时替换实现部分
+// print(circle.draw())
 

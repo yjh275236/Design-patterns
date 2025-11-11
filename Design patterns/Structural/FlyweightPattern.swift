@@ -9,6 +9,8 @@
 import Foundation
 
 // MARK: - 享元模式
+// 核心角色：TreeType 代表可共享的内部状态，TreeFactory 负责缓存/复用，Tree 持有外部状态
+// 新手提示：留意“核心实现”标记理解享元缓存，其余代码用于演示树的属性和使用
 
 // 内部状态结构体，存储可共享的状态信息
 struct IntrinsicState {
@@ -56,7 +58,7 @@ class TreeFactory {
         
         // 检查是否已存在该类型的树
         if let existing = treeTypes[key] {
-            // 如果存在，直接返回已有的树类型（复用）
+            // 核心实现：复用已存在的享元对象
             return existing
         }
         
@@ -98,8 +100,14 @@ class Tree {
     
     // 绘制树的方法
     func draw() -> String {
-        // 调用树类型的draw方法，传入外部状态（位置）
+        // 核心实现：调用共享对象，并传入外部状态
         return type.draw(x: x, y: y)
     }
 }
+
+// 使用示例（批量创建对象时共享大量重复数据）：
+// let oakType = TreeFactory.getTreeType(name: "橡树", color: "绿色", texture: "粗糙")
+// let tree1 = Tree(x: 10, y: 20, type: oakType)                   // 核心：多个树共享同一类型
+// let tree2 = Tree(x: 15, y: 25, type: oakType)
+// print("享元数量:", TreeFactory.getTreeCount())
 

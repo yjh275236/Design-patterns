@@ -9,6 +9,8 @@
 import Foundation
 
 // MARK: - 建造者模式
+// 核心角色：PizzaBuilder 定义构建步骤，ConcretePizzaBuilder 实现细节，PizzaDirector 负责装配顺序
+// 新手提示：关注“核心实现”标记即可理解建造者模式，其余属性和方法用于演示不同配方
 
 // 披萨产品类，包含披萨的所有组成部分
 class Pizza {
@@ -40,15 +42,15 @@ class Pizza {
 
 // 披萨建造者协议，定义构建披萨的各个步骤
 protocol PizzaBuilder {
-    // 设置面团类型
+    // 核心实现：设置面团类型（构建步骤之一）
     func setDough(_ dough: String)
-    // 设置酱料类型
+    // 核心实现：设置酱料类型
     func setSauce(_ sauce: String)
-    // 设置奶酪类型
+    // 核心实现：设置奶酪类型
     func setCheese(_ cheese: String)
-    // 添加配料
+    // 核心实现：添加配料
     func addTopping(_ topping: String)
-    // 构建并返回披萨对象
+    // 核心实现：完成构建并返回成品
     func build() -> Pizza
 }
 
@@ -57,31 +59,31 @@ class ConcretePizzaBuilder: PizzaBuilder {
     // 私有属性：当前正在构建的披萨对象
     private var pizza = Pizza()
     
-    // 实现setDough方法，设置面团类型
+    // 核心实现：逐步为产品设置面团
     func setDough(_ dough: String) {
         // 设置披萨的面团属性
         pizza.dough = dough
     }
     
-    // 实现setSauce方法，设置酱料类型
+    // 核心实现：设置酱料
     func setSauce(_ sauce: String) {
         // 设置披萨的酱料属性
         pizza.sauce = sauce
     }
     
-    // 实现setCheese方法，设置奶酪类型
+    // 核心实现：设置奶酪
     func setCheese(_ cheese: String) {
         // 设置披萨的奶酪属性
         pizza.cheese = cheese
     }
     
-    // 实现addTopping方法，添加配料
+    // 核心实现：添加额外配料
     func addTopping(_ topping: String) {
         // 将配料添加到披萨的配料数组中
         pizza.toppings.append(topping)
     }
     
-    // 实现build方法，构建并返回披萨
+    // 核心实现：返回当前产品并重置建造者
     func build() -> Pizza {
         // 保存当前构建的披萨
         let result = pizza
@@ -97,13 +99,13 @@ class PizzaDirector {
     // 私有属性：持有的建造者引用
     private var builder: PizzaBuilder
     
-    // 初始化方法，接收一个建造者对象
+    // 核心实现：通过构造注入具体建造者
     init(builder: PizzaBuilder) {
         // 保存建造者引用
         self.builder = builder
     }
     
-    // 制作玛格丽塔披萨的方法
+    // 演示流程：制作玛格丽塔披萨的固定步骤
     func makeMargherita() -> Pizza {
         // 设置薄脆面团
         builder.setDough("薄脆")
@@ -131,4 +133,10 @@ class PizzaDirector {
         return builder.build()
     }
 }
+
+// 使用示例（在需要的位置创建建造者和导演）：
+// let builder = ConcretePizzaBuilder()           // 核心：选择具体建造者
+// let director = PizzaDirector(builder: builder) // 导演负责组织步骤
+// let pizza = director.makePepperoni()           // 返回已按步骤构建好的披萨
+// print(pizza.description())                     // 查看最终产品描述
 

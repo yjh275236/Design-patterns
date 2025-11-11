@@ -9,10 +9,12 @@
 import Foundation
 
 // MARK: - 访问者模式
+// 核心角色：ComputerPart（元素）定义 accept，Visitor 提供针对不同元素的 visit 实现
+// 新手提示：关注“核心实现”标记，理解双派发如何根据元素/访问者组合执行不同操作
 
 // 电脑部件协议，定义接受访问者的接口
 protocol ComputerPart {
-    // 接受访问者的方法，接收访问者对象，返回访问结果
+    // 核心实现：接受访问者并将自己传递给访问者
     func accept(visitor: ComputerPartVisitor) -> String
 }
 
@@ -45,7 +47,7 @@ class Computer: ComputerPart {
         var result = "访问计算机\n"
         // 遍历所有部件
         for part in parts {
-            // 让每个部件接受访问者访问，并添加到结果中
+            // 核心实现：元素将访问者传递给子元素
             result += part.accept(visitor: visitor) + "\n"
         }
         // 返回访问结果
@@ -57,7 +59,7 @@ class Computer: ComputerPart {
 class Mouse: ComputerPart {
     // 实现accept方法，接受访问者访问
     func accept(visitor: ComputerPartVisitor) -> String {
-        // 调用访问者的visit方法访问鼠标
+        // 核心实现：反向调用访问者上的匹配方法
         return visitor.visit(mouse: self)
     }
 }
@@ -66,7 +68,7 @@ class Mouse: ComputerPart {
 class Keyboard: ComputerPart {
     // 实现accept方法，接受访问者访问
     func accept(visitor: ComputerPartVisitor) -> String {
-        // 调用访问者的visit方法访问键盘
+        // 核心实现：反向调用访问者上的匹配方法
         return visitor.visit(keyboard: self)
     }
 }
@@ -75,7 +77,7 @@ class Keyboard: ComputerPart {
 class Monitor: ComputerPart {
     // 实现accept方法，接受访问者访问
     func accept(visitor: ComputerPartVisitor) -> String {
-        // 调用访问者的visit方法访问显示器
+        // 核心实现：反向调用访问者上的匹配方法
         return visitor.visit(monitor: self)
     }
 }
@@ -133,4 +135,11 @@ class ComputerPartRepairVisitor: ComputerPartVisitor {
         return "修理显示器"
     }
 }
+
+// 使用示例（在不修改元素类的情况下添加新操作）：
+// let computer = Computer()
+// let displayVisitor = ComputerPartDisplayVisitor()
+// print(computer.accept(visitor: displayVisitor))          // 核心：访问者决定具体操作
+// let repairVisitor = ComputerPartRepairVisitor()
+// print(computer.accept(visitor: repairVisitor))
 
